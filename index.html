@@ -1,0 +1,1050 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mendel & His Peas · 孟德尔与他的豌豆 — 交互式遗传学入门</title>
+<style>
+:root{
+  --bg:#F4F7EF;
+  --bg-2:#EAF1E2;
+  --ink:#1F2D1A;
+  --ink-2:#4A5548;
+  --muted:#7C8679;
+  --card:#FFFFFF;
+  --line:#D9E2CE;
+  --green:#2E7D5B;
+  --green-2:#55A67F;
+  --green-soft:#DCEFE2;
+  --purple:#7B5CC4;
+  --purple-soft:#E7DEFA;
+  --white-petal:#FAFAF3;
+  --amber:#E2A63A;
+  --amber-soft:#FBF0D4;
+  --pink:#E36C9A;
+  --red:#C64B3C;
+  --shadow:0 10px 24px -14px rgba(30,50,20,.18);
+  --radius:16px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:"Inter","PingFang SC","Microsoft YaHei","Helvetica Neue",sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:var(--green);text-decoration:none}
+a:hover{text-decoration:underline}
+img,svg{max-width:100%;display:block}
+button{font:inherit;cursor:pointer;border:none;background:none}
+
+/* ===== 顶部导航 ===== */
+.topbar{position:sticky;top:0;z-index:50;background:rgba(244,247,239,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.topbar-inner{max-width:1180px;margin:0 auto;padding:12px 22px;display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;color:var(--ink)}
+.brand-ico{width:34px;height:34px;background:var(--green);color:#fff;border-radius:10px;display:grid;place-items:center;font-size:18px}
+.brand-sub{font-size:12px;color:var(--muted);font-weight:500}
+.nav{display:flex;gap:6px;flex-wrap:wrap;margin-left:auto}
+.nav a{padding:8px 14px;border-radius:999px;font-size:14px;color:var(--ink-2);transition:all .2s}
+.nav a:hover{background:var(--green-soft);color:var(--green);text-decoration:none}
+.lang-toggle{margin-left:auto;padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:var(--card);font-size:12px;color:var(--ink-2)}
+
+/* ===== 通用 ===== */
+main{max-width:1180px;margin:0 auto;padding:32px 22px 80px}
+.section{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:32px;margin-bottom:28px;box-shadow:var(--shadow)}
+.section h2{margin:0 0 6px;font-size:24px;color:var(--ink);display:flex;align-items:center;gap:12px}
+.section h2 .tag{background:var(--green);color:#fff;font-size:12px;padding:3px 10px;border-radius:999px;font-weight:600}
+.section .lead{color:var(--ink-2);margin:0 0 24px;font-size:15px}
+.bilingual{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.bilingual .zh{color:var(--ink)}
+.bilingual .en{color:var(--ink-2);font-style:italic}
+@media(max-width:760px){.bilingual{grid-template-columns:1fr}}
+
+/* ===== Hero ===== */
+.hero{background:linear-gradient(135deg,#2E7D5B 0%,#55A67F 60%,#7B5CC4 100%);color:#fff;border-radius:var(--radius);padding:48px 36px;position:relative;overflow:hidden;margin-bottom:28px}
+.hero::after{content:"";position:absolute;right:-60px;bottom:-60px;width:240px;height:240px;border-radius:50%;background:rgba(255,255,255,.08)}
+.hero::before{content:"";position:absolute;right:40px;top:-40px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.06)}
+.hero h1{margin:0 0 12px;font-size:34px;font-weight:800;letter-spacing:.5px}
+.hero .sub{font-size:16px;opacity:.92;max-width:720px}
+.hero .meta{margin-top:18px;display:flex;gap:18px;flex-wrap:wrap;font-size:13px;opacity:.9}
+.hero .meta span{background:rgba(255,255,255,.15);padding:6px 12px;border-radius:999px}
+
+/* ===== Section 1: 为什么豌豆？ ===== */
+.compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:18px}
+@media(max-width:800px){.compare-grid{grid-template-columns:1fr}}
+.compare-card{border-radius:14px;padding:22px;position:relative;overflow:hidden}
+.compare-card.mendel{background:linear-gradient(135deg,var(--green-soft) 0%,#fff 100%);border:1.5px solid var(--green-2)}
+.compare-card.darwin{background:linear-gradient(135deg,#F6EFE0 0%,#fff 100%);border:1.5px solid var(--amber)}
+.compare-card h3{margin:0 0 4px;font-size:18px;display:flex;align-items:center;gap:10px}
+.compare-card .sci{font-size:12px;color:var(--muted);font-style:italic;margin-bottom:14px}
+.compare-card ul{margin:0;padding-left:18px;font-size:14px;color:var(--ink-2)}
+.compare-card ul li{margin-bottom:6px}
+.compare-card .badge{display:inline-block;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:600;margin-bottom:10px}
+.compare-card.mendel .badge{background:var(--green);color:#fff}
+.compare-card.darwin .badge{background:var(--amber);color:#fff}
+.verdict{margin-top:22px;padding:18px;background:var(--amber-soft);border-left:4px solid var(--amber);border-radius:10px;font-size:14px}
+.verdict strong{color:var(--red)}
+
+/* ===== Section 2: Perfect Flower ===== */
+.flower-wrap{display:grid;grid-template-columns:1.1fr .9fr;gap:28px;align-items:start}
+@media(max-width:900px){.flower-wrap{grid-template-columns:1fr}}
+.flower-svg-box{background:linear-gradient(180deg,#F4F9ED 0%,#E8F1DC 100%);border-radius:14px;padding:18px;border:1px solid var(--line);position:relative}
+.flower-svg-box svg{width:100%;height:auto;display:block}
+.flower-part{cursor:pointer;transition:all .25s}
+.flower-part:hover{filter:drop-shadow(0 2px 6px rgba(0,0,0,.2))}
+.flower-part.active{filter:drop-shadow(0 0 8px rgba(46,125,91,.6))}
+.flower-info{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px;min-height:300px}
+.flower-info h4{margin:0 0 10px;color:var(--green);font-size:18px;display:flex;align-items:center;gap:8px}
+.flower-info .sex-tag{display:inline-block;padding:2px 10px;border-radius:999px;font-size:12px;font-weight:600;margin-left:auto}
+.female-tag{background:var(--purple-soft);color:var(--purple)}
+.male-tag{background:var(--amber-soft);color:#A67C1F}
+.flower-info p{margin:6px 0;font-size:14px;color:var(--ink-2)}
+.flower-info .zh-line{color:var(--ink);font-weight:500}
+.pollinate-tabs{display:flex;gap:8px;margin-top:18px;flex-wrap:wrap}
+.pollinate-tabs button{padding:8px 14px;border-radius:999px;border:1.5px solid var(--line);background:var(--card);font-size:13px;color:var(--ink-2);transition:all .2s}
+.pollinate-tabs button.active{background:var(--green);color:#fff;border-color:var(--green)}
+.pollinate-demo{margin-top:14px;background:var(--bg-2);border-radius:12px;padding:14px;min-height:140px;font-size:14px;color:var(--ink-2)}
+.pollinate-demo strong{color:var(--green)}
+.key-points{margin-top:16px;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+.key-point{background:var(--green-soft);border-radius:10px;padding:10px 14px;font-size:13px;color:var(--ink)}
+.key-point .k{font-weight:700;color:var(--green);display:block;font-size:12px;margin-bottom:3px}
+
+/* ===== Section 3: 3:1 Explorer ===== */
+.explorer-intro{background:var(--purple-soft);border-radius:12px;padding:16px 20px;margin-bottom:20px;font-size:14px;color:var(--ink)}
+.explorer-intro .q{font-weight:700;color:var(--purple);display:block;margin-bottom:4px}
+.step-guide{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap}
+.step{flex:1;min-width:180px;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:14px;position:relative}
+.step.done{border-color:var(--green);background:var(--green-soft)}
+.step.active{border-color:var(--purple);box-shadow:0 0 0 3px rgba(123,92,196,.15)}
+.step .num{position:absolute;top:-10px;left:12px;background:var(--purple);color:#fff;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:700}
+.step.done .num{background:var(--green)}
+.step h5{margin:6px 0 4px;font-size:14px;color:var(--ink)}
+.step p{margin:0;font-size:12px;color:var(--ink-2)}
+
+.cross-stage{background:linear-gradient(180deg,#FBF9F1 0%,#F0EBD9 100%);border-radius:14px;padding:20px;border:1px solid var(--line);margin-bottom:18px}
+.cross-stage h5{margin:0 0 12px;font-size:14px;color:var(--ink)}
+.cross-row{display:flex;align-items:center;gap:14px;margin-bottom:10px;flex-wrap:wrap}
+.plant-ico{width:54px;height:54px;border-radius:12px;display:grid;place-items:center;font-size:28px;flex-shrink:0}
+.plant-ico.purple{background:var(--purple-soft)}
+.plant-ico.white{background:#F5F5F0}
+.plant-ico.hybrid{background:linear-gradient(135deg,var(--purple-soft),#F5F5F0);border:2px dashed var(--purple)}
+.cross-label{font-size:13px;color:var(--ink-2);flex:1;min-width:180px}
+.cross-label b{color:var(--ink);display:block;font-size:14px}
+.arrow-btn{padding:8px 16px;border-radius:999px;background:var(--purple);color:#fff;font-size:13px;font-weight:600;transition:transform .15s}
+.arrow-btn:hover{transform:translateY(-1px)}
+.arrow-btn:disabled{background:var(--line);color:var(--muted);cursor:not-allowed;transform:none}
+
+.garden-section{background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:20px;margin-bottom:18px}
+.garden-section h5{margin:0 0 6px;font-size:15px;color:var(--ink)}
+.garden-section .hint{font-size:12px;color:var(--muted);margin-bottom:12px}
+.garden-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:6px;margin-bottom:16px;max-width:560px}
+.pea-cell{aspect-ratio:1;border-radius:10px;background:var(--bg-2);border:1.5px dashed var(--line);display:grid;place-items:center;font-size:22px;cursor:pointer;transition:all .25s;position:relative}
+.pea-cell:hover:not(.planted){background:#FFF6DD;border-color:var(--amber)}
+.pea-cell.planted{border-style:solid;cursor:default}
+.pea-cell.planted.purple{background:var(--purple);color:#fff;animation:pop .4s}
+.pea-cell.planted.white{background:#FAFAF3;color:var(--ink);border-color:var(--line);animation:pop .4s}
+@keyframes pop{0%{transform:scale(.5);opacity:0}60%{transform:scale(1.15)}100%{transform:scale(1);opacity:1}}
+
+.stats-box{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px}
+@media(max-width:600px){.stats-box{grid-template-columns:1fr}}
+.stat-card{background:var(--bg);border-radius:12px;padding:14px;text-align:center;border:1px solid var(--line)}
+.stat-card .lbl{font-size:12px;color:var(--muted);margin-bottom:4px}
+.stat-card .val{font-size:26px;font-weight:800;color:var(--ink)}
+.stat-card .val.purple-c{color:var(--purple)}
+.stat-card .val.white-c{color:var(--ink-2)}
+.stat-card .val.ratio-c{color:var(--green)}
+
+.ratio-bar{margin-top:14px;background:var(--bg);border-radius:10px;padding:10px 14px;border:1px solid var(--line)}
+.ratio-bar .title{font-size:12px;color:var(--muted);margin-bottom:6px;display:flex;justify-content:space-between}
+.bar-outer{height:22px;background:#fff;border-radius:999px;overflow:hidden;display:flex;position:relative}
+.bar-inner.purple-b{background:var(--purple);transition:width .4s}
+.bar-inner.white-b{background:#C9C3B3;transition:width .4s}
+.bar-legend{display:flex;gap:16px;font-size:12px;margin-top:6px;color:var(--ink-2)}
+.bar-legend span::before{content:"";display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:middle}
+.bar-legend .lg-p::before{background:var(--purple)}
+.bar-legend .lg-w::before{background:#C9C3B3}
+
+.history-log{margin-top:14px;max-height:140px;overflow-y:auto;background:var(--bg);border-radius:10px;padding:10px 14px;border:1px solid var(--line);font-size:12px;color:var(--ink-2)}
+.history-log .row{display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px dotted var(--line)}
+.history-log .row:last-child{border-bottom:none}
+.history-log .row b{color:var(--ink)}
+
+.mendel-data{margin-top:16px;background:var(--amber-soft);border-radius:12px;padding:14px 16px;border-left:4px solid var(--amber)}
+.mendel-data h6{margin:0 0 8px;font-size:14px;color:var(--ink)}
+.mendel-table{width:100%;border-collapse:collapse;font-size:13px}
+.mendel-table th,.mendel-table td{padding:6px 10px;text-align:left;border-bottom:1px solid rgba(226,166,58,.25)}
+.mendel-table th{font-weight:600;color:var(--ink);background:rgba(255,255,255,.4)}
+.mendel-table td:last-child{text-align:right;font-variant-numeric:tabular-nums}
+.mendel-table tr:last-child td{border-bottom:none}
+.mendel-table .ratio{font-weight:700;color:var(--green)}
+
+/* ===== Section 4: Reader's Theater ===== */
+.theater-stage{background:linear-gradient(180deg,#2E2A3E 0%,#1F1C2B 100%);color:#fff;border-radius:14px;padding:24px;position:relative;overflow:hidden}
+.theater-stage::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 20% 20%,rgba(226,166,58,.18),transparent 50%),radial-gradient(circle at 80% 80%,rgba(123,92,196,.18),transparent 50%);pointer-events:none}
+.theater-head{display:flex;align-items:center;gap:14px;margin-bottom:16px;position:relative}
+.theater-head .curtain{font-size:28px}
+.theater-head h5{margin:0;font-size:17px}
+.theater-head .sub{font-size:12px;color:#B7B1C7;margin-left:auto}
+.roles{display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.role-chip{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);padding:8px 14px;border-radius:999px;font-size:13px}
+.role-chip .av{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-size:16px}
+.role-chip.reporter .av{background:var(--amber)}
+.role-chip.mendel .av{background:var(--purple)}
+
+.interview-log{background:rgba(0,0,0,.25);border-radius:12px;padding:14px;min-height:200px;max-height:420px;overflow-y:auto;margin-bottom:14px}
+.msg{display:flex;gap:10px;margin-bottom:12px;align-items:flex-start}
+.msg .avatar{width:32px;height:32px;border-radius:50%;flex-shrink:0;display:grid;place-items:center;font-size:16px}
+.msg.reporter .avatar{background:var(--amber)}
+.msg.mendel .avatar{background:var(--purple)}
+.msg .bubble{background:rgba(255,255,255,.1);border-radius:12px;padding:10px 14px;font-size:13px;max-width:85%;line-height:1.55}
+.msg.reporter .bubble{background:rgba(226,166,58,.18)}
+.msg .bubble .zh{color:#fff;display:block}
+.msg .bubble .en{color:#B7B1C7;font-style:italic;font-size:12px;margin-top:4px;display:block}
+.msg .name{font-size:11px;color:#B7B1C7;margin-bottom:3px;font-weight:600;letter-spacing:.5px}
+
+.q-panel{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:14px}
+.q-btn{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);color:#fff;padding:10px 14px;border-radius:10px;text-align:left;font-size:13px;transition:all .2s;display:flex;gap:8px;align-items:flex-start}
+.q-btn:hover{background:rgba(226,166,58,.18);border-color:var(--amber)}
+.q-btn .num{background:var(--purple);color:#fff;width:20px;height:20px;border-radius:50%;display:grid;place-items:center;font-size:11px;font-weight:700;flex-shrink:0}
+.q-btn.asked{opacity:.5;border-style:dashed}
+.q-btn .t{flex:1}
+.q-btn .t .zh{display:block;font-weight:600}
+.q-btn .t .en{display:block;font-size:11px;color:#B7B1C7;font-style:italic;margin-top:2px}
+
+.voice-bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;background:rgba(255,255,255,.06);border-radius:999px;padding:8px 14px}
+.voice-bar .mic{width:40px;height:40px;border-radius:50%;background:var(--red);color:#fff;display:grid;place-items:center;font-size:18px;transition:all .2s}
+.voice-bar .mic.recording{animation:pulse 1.4s infinite;background:#C64B3C}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(198,75,60,.6)}50%{box-shadow:0 0 0 12px rgba(198,75,60,0)}}
+.voice-bar .status{font-size:12px;color:#B7B1C7;flex:1;min-width:160px}
+.voice-bar .status b{color:#fff}
+.voice-bar .play-all{padding:8px 14px;border-radius:999px;background:var(--green);color:#fff;font-size:12px}
+
+.voice-note{margin-top:12px;font-size:12px;color:#B7B1C7;padding:10px 14px;background:rgba(255,255,255,.05);border-radius:10px;line-height:1.55}
+.voice-note code{background:rgba(255,255,255,.1);padding:1px 6px;border-radius:4px;font-size:11px}
+
+/* ===== Footer ===== */
+footer{max-width:1180px;margin:0 auto;padding:20px 22px 40px;font-size:12px;color:var(--muted);text-align:center}
+
+/* ===== Responsive ===== */
+@media(max-width:700px){
+  .hero{padding:32px 22px}
+  .hero h1{font-size:26px}
+  .section{padding:22px}
+  .garden-grid{grid-template-columns:repeat(6,1fr)}
+  .nav{width:100%;justify-content:flex-start}
+}
+
+/* ===== Accessibility & Reduced Motion ===== */
+a:focus-visible, button:focus-visible{outline:3px solid var(--purple);outline-offset:2px;border-radius:8px}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important;scroll-behavior:auto !important}
+}
+
+/* ===== Print ===== */
+@media print{
+  .topbar,.voice-bar,.pollinate-tabs,.arrow-btn,.mic,.q-btn{display:none}
+  .section{box-shadow:none;page-break-inside:avoid}
+  body{background:#fff}
+}
+</style>
+</head>
+<body>
+
+<!-- ===== 顶部导航 ===== -->
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <div class="brand-ico">🌱</div>
+      <div>
+        <div>Mendel & His Peas</div>
+        <div class="brand-sub">G9 Honor Biology · Lesson 3</div>
+      </div>
+    </div>
+    <nav class="nav">
+      <a href="#why">① 为什么豌豆</a>
+      <a href="#flower">② 花的结构</a>
+      <a href="#ratio">③ 3:1 探索</a>
+      <a href="#theater">④ 采访孟德尔</a>
+    </nav>
+    <button class="lang-toggle" onclick="toggleLang()" id="langBtn">EN / 中</button>
+  </div>
+</header>
+
+<main>
+
+<!-- ===== Hero ===== -->
+<section class="hero">
+  <h1>Mendel & His Peas · 孟德尔与他的豌豆</h1>
+  <p class="sub">
+    150 多年前，一位奥地利修士通过豌豆实验，揭开了遗传学的秘密。
+    More than 150 years ago, an Austrian monk unlocked the secret of heredity through pea experiments.
+  </p>
+  <div class="meta">
+    <span>🎯 4 个互动模块 · Interactive Modules</span>
+    <span>🔬 关键术语：trait · genetics · heredity · hybrid · true-breeding</span>
+    <span>🎙️ 含语音采访互动 · Voice interview included</span>
+  </div>
+</section>
+
+<!-- ===== Section 1: Why Pea? ===== -->
+<section class="section" id="why">
+  <h2><span class="tag">01</span>为什么是豌豆？<span style="color:var(--muted);font-weight:400;font-size:16px">Why Peas?</span></h2>
+  <p class="lead">
+    同样在研究"性状如何传递"，为什么孟德尔成功了，而几乎同时代的达尔文却没有找到遗传规律？
+    <br><em style="color:var(--muted)">Why did Mendel succeed in finding the laws of inheritance, while his contemporary Darwin did not — even though both were studying the same question?</em>
+  </p>
+
+  <div class="compare-grid">
+    <!-- Mendel 卡片 -->
+    <div class="compare-card mendel">
+      <span class="badge">✅ 成功 · Success</span>
+      <h3>🟣 Gregor Mendel · 孟德尔</h3>
+      <div class="sci">1856–1864 · 豌豆 <em>Pisum sativum</em> · 8 年</div>
+      <ul>
+        <li><b>繁殖快</b>：短世代时间，一年内能完成多代实验。<br><em>Short generation time — multiple generations per year.</em></li>
+        <li><b>后代多</b>：每荚多粒种子，便于<strong>统计</strong>。<br><em>Many offspring per pod — easy to count and analyze statistically.</em></li>
+        <li><b>性状明显</b>：7 对可区分的相对性状（花色、种子形状…）。<br><em>7 clearly distinct traits — flower color, seed shape, etc.</em></li>
+        <li><b>自花授粉且闭花授粉</b>：天然"纯种"，容易控制杂交。<br><em>Naturally self-pollinating → true-breeding lines; easy to control crosses.</em></li>
+        <li><b>定量思维</b>：用<b>数学比例</b>分析后代，发现 3:1 规律。<br><em>Used mathematics to analyze ratios — discovered 3:1.</em></li>
+      </ul>
+    </div>
+
+    <!-- Darwin 卡片 -->
+    <div class="compare-card darwin">
+      <span class="badge">⚠️ 未得规律 · Did not find the pattern</span>
+      <h3>🐦 Charles Darwin · 达尔文</h3>
+      <div class="sci">1850s–1860s · 家鸽 <em>Columba</em> · 同期</div>
+      <ul>
+        <li><b>世代慢</b>：鸽子性成熟需数月，繁殖周期长。<br><em>Pigeons mature slowly — long generation time.</em></li>
+        <li><b>后代少</b>：每次通常只产 2 枚卵，统计样本小。<br><em>Usually only 2 eggs per clutch — small statistical samples.</em></li>
+        <li><b>性状连续</b>：羽色、体型多为渐进变异，不易划分类型。<br><em>Traits are often continuous (color gradients, body size) — hard to classify.</em></li>
+        <li><b>交配难控</b>：鸟类行为复杂，难以保证纯种亲本。<br><em>Complex mating behavior — difficult to guarantee true-breeding parents.</em></li>
+        <li><b>关注进化而非机制</b>：达尔文关心"性状为何变化"，而不是"如何稳定传递"。<br><em>Darwin focused on <strong>why</strong> traits change (evolution), not <strong>how</strong> they are transmitted.</em></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="verdict">
+    <strong>🔑 关键对比 Key Takeaway：</strong>
+    孟德尔的成功不仅在于"选择了正确的生物"，更在于<b>把生物学的观察变成了数学问题</b>。
+    豌豆的每一荚都是一组可统计的数据点；而达尔文的鸽子更像一幅幅难以量化的肖像画。
+    <br><em>Mendel's success came not just from choosing the right organism, but from turning biology into a <b>mathematical question</b>. Every pea pod was a data point; Darwin's pigeons were more like uncountable portraits.</em>
+  </div>
+</section>
+
+<!-- ===== Section 2: Perfect Flower ===== -->
+<section class="section" id="flower">
+  <h2><span class="tag">02</span>Perfect Flower · 完全花的结构</h2>
+  <p class="lead">
+    豌豆花是"完全花"——<b>同一朵花里既有雄蕊也有雌蕊</b>。点击花的各部分，认识它的结构：
+    <br><em>A pea flower is a "perfect flower" — it has <b>both stamens (male) and pistil (female)</b> in the same flower. Click each part to explore.</em>
+  </p>
+
+  <div class="flower-wrap">
+    <!-- SVG 花结构 -->
+    <div class="flower-svg-box">
+      <svg viewBox="0 0 400 420" xmlns="http://www.w3.org/2000/svg" aria-label="豌豆花结构图">
+        <title>豌豆花结构 · Pea Flower Structure</title>
+        <desc>豌豆完全花剖面：紫色花瓣包裹中央雌蕊（柱头、花柱、子房）和黄色雄蕊（花药、花丝），底部为绿色萼片。Perfect flower cross-section showing pistil (stigma, style, ovary), stamens (anther, filament), petals and sepals.</desc>
+        <!-- 花梗 -->
+        <path d="M200 400 Q 200 360 200 320" stroke="#3E7D4F" stroke-width="5" fill="none"/>
+        <!-- 萼片 (sepals) -->
+        <g class="flower-part" data-part="sepal" onclick="showPart('sepal')">
+          <path d="M200 320 Q 170 300 160 270 Q 180 285 200 320 Z" fill="#5FA36F" stroke="#3E7D4F" stroke-width="1.5"/>
+          <path d="M200 320 Q 230 300 240 270 Q 220 285 200 320 Z" fill="#5FA36F" stroke="#3E7D4F" stroke-width="1.5"/>
+          <text x="115" y="295" font-size="11" fill="#3E7D4F" font-weight="600">萼片 sepal</text>
+        </g>
+        <!-- 花瓣 (petals) - 旗瓣 -->
+        <g class="flower-part" data-part="petal" onclick="showPart('petal')">
+          <ellipse cx="200" cy="180" rx="85" ry="55" fill="#C9A4E8" stroke="#7B5CC4" stroke-width="1.5"/>
+          <ellipse cx="200" cy="180" rx="75" ry="45" fill="#E7DEFA"/>
+          <text x="172" y="135" font-size="11" fill="#7B5CC4" font-weight="600">旗瓣 standard</text>
+        </g>
+        <!-- 翼瓣 wings -->
+        <g class="flower-part" data-part="petal" onclick="showPart('petal')">
+          <path d="M140 230 Q 120 250 140 270 Q 160 260 170 240 Z" fill="#D6BCEB" stroke="#7B5CC4" stroke-width="1.2"/>
+          <path d="M260 230 Q 280 250 260 270 Q 240 260 230 240 Z" fill="#D6BCEB" stroke="#7B5CC4" stroke-width="1.2"/>
+          <text x="90" y="255" font-size="11" fill="#7B5CC4" font-weight="600">翼瓣 wing</text>
+        </g>
+        <!-- 龙骨瓣 keel -->
+        <g class="flower-part" data-part="petal" onclick="showPart('petal')">
+          <path d="M175 245 Q 200 290 225 245 Q 210 265 200 268 Q 190 265 175 245 Z" fill="#B08AD8" stroke="#7B5CC4" stroke-width="1.5"/>
+          <text x="260" y="280" font-size="11" fill="#7B5CC4" font-weight="600">龙骨瓣 keel</text>
+        </g>
+        <!-- 雌蕊 pistil (female) -->
+        <g class="flower-part" data-part="pistil" onclick="showPart('pistil')">
+          <!-- 子房 ovary -->
+          <ellipse cx="200" cy="285" rx="10" ry="6" fill="#7B5CC4"/>
+          <!-- 花柱 style -->
+          <path d="M200 285 Q 200 230 200 200" stroke="#7B5CC4" stroke-width="2.5" fill="none"/>
+          <!-- 柱头 stigma -->
+          <circle cx="200" cy="198" r="5" fill="#E36C9A"/>
+          <circle cx="196" cy="196" r="2" fill="#fff" opacity=".6"/>
+          <!-- 标签 -->
+          <line x1="208" y1="200" x2="270" y2="175" stroke="#7B5CC4" stroke-width="1" stroke-dasharray="3,2"/>
+          <text x="272" y="172" font-size="11" fill="#7B5CC4" font-weight="700">♀ 雌蕊 pistil</text>
+          <text x="272" y="185" font-size="10" fill="#4A5548">柱头→花柱→子房</text>
+          <text x="272" y="197" font-size="10" fill="#4A5548">stigma · style · ovary</text>
+        </g>
+        <!-- 雄蕊 stamen (male) -->
+        <g class="flower-part" data-part="stamen" onclick="showPart('stamen')">
+          <!-- 花丝 filaments -->
+          <path d="M190 275 Q 175 250 170 230" stroke="#E2A63A" stroke-width="1.8" fill="none"/>
+          <path d="M210 275 Q 225 250 230 230" stroke="#E2A63A" stroke-width="1.8" fill="none"/>
+          <path d="M195 278 Q 185 260 183 245" stroke="#E2A63A" stroke-width="1.8" fill="none"/>
+          <path d="M205 278 Q 215 260 217 245" stroke="#E2A63A" stroke-width="1.8" fill="none"/>
+          <!-- 花药 anthers -->
+          <ellipse cx="170" cy="228" rx="5" ry="3" fill="#E2A63A"/>
+          <ellipse cx="230" cy="228" rx="5" ry="3" fill="#E2A63A"/>
+          <ellipse cx="183" cy="243" rx="5" ry="3" fill="#E2A63A"/>
+          <ellipse cx="217" cy="243" rx="5" ry="3" fill="#E2A63A"/>
+          <!-- 花粉粒 -->
+          <circle cx="175" cy="215" r="1.5" fill="#E2A63A"/>
+          <circle cx="225" cy="218" r="1.5" fill="#E2A63A"/>
+          <circle cx="180" cy="235" r="1.5" fill="#E2A63A"/>
+          <!-- 标签 -->
+          <line x1="165" y1="230" x2="115" y2="215" stroke="#E2A63A" stroke-width="1" stroke-dasharray="3,2"/>
+          <text x="30" y="210" font-size="11" fill="#A67C1F" font-weight="700">♂ 雄蕊 stamen</text>
+          <text x="30" y="223" font-size="10" fill="#4A5548">花药(花粉) + 花丝</text>
+          <text x="30" y="235" font-size="10" fill="#4A5548">anther + filament</text>
+        </g>
+        <!-- 子房标注 -->
+        <g>
+          <line x1="200" y1="290" x2="120" y2="330" stroke="#7B5CC4" stroke-width="1" stroke-dasharray="3,2"/>
+          <text x="60" y="345" font-size="11" fill="#7B5CC4" font-weight="600">子房 ovary</text>
+          <text x="60" y="358" font-size="10" fill="#4A5548">内含胚珠 ovules</text>
+        </g>
+      </svg>
+    </div>
+
+    <!-- 信息面板 -->
+    <div>
+      <div class="flower-info" id="flowerInfo">
+        <h3 style="margin:0 0 10px;color:var(--green);font-size:18px">🌸 点击花的任一部位 <span class="sex-tag" style="background:var(--green-soft);color:var(--green);font-size:12px;font-weight:600">Perfect Flower</span></h3>
+        <p class="zh-line">豌豆花是完全花（perfect flower）：一朵花里同时具备雄蕊（♂ stamen）和雌蕊（♀ pistil）。</p>
+        <p>Pea flowers are <b>perfect flowers</b>: both male and female reproductive organs live inside one single flower.</p>
+        <p style="color:var(--muted);font-size:12px;margin-top:14px">💡 这也是豌豆能<b>自花授粉</b>的关键——不需要另一朵花帮忙。</p>
+      </div>
+
+      <div class="pollinate-tabs">
+        <button class="active" data-tab="self" onclick="switchPollTab('self')">🌱 自花授粉 Self-Pollination</button>
+        <button data-tab="cross" onclick="switchPollTab('cross')">🌸→🌸 异花授粉 Cross-Pollination</button>
+      </div>
+      <div class="pollinate-demo" id="pollDemo">
+        <strong>🌱 自花授粉 Self-Pollination</strong><br>
+        同一朵花内，<b>雄蕊的花粉</b>（pollen from anther）落到<b>同一朵花的柱头</b>（stigma of the same flower）上。<br>
+        <em>Pollen from the stamen lands on the pistil of <b>the same flower</b> (or another flower on the same plant).</em><br><br>
+        💡 <b>结果：</b>后代永远是"纯种"（true-breeding）——和亲本长得一模一样！<br>
+        <em>Result: offspring are always <b>true-breeding</b> — identical to the parent.</em>
+      </div>
+
+      <div class="key-points">
+        <div class="key-point"><span class="k">🔑 Key 1</span>完全花 = 雌雄同花<br>Perfect = male + female in one flower</div>
+        <div class="key-point"><span class="k">🔑 Key 2</span>自花授粉 → 天然纯种<br>Self-pollination → true-breeding</div>
+        <div class="key-point"><span class="k">🔑 Key 3</span>孟德尔人工去雄→异花授粉<br>Mendel removed stamens → crossed plants</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Section 3: 3:1 Ratio Explorer ===== -->
+<section class="section" id="ratio">
+  <h2><span class="tag">03</span>3:1 是怎么来的？<span style="color:var(--muted);font-weight:400;font-size:16px">The 3:1 Ratio Discovery</span></h2>
+  <p class="lead">
+    孟德尔最惊人的发现：杂交第二代中，"消失"的性状又出现了，而且比例恒定为 <b>≈ 3:1</b>。
+    <br><em>Mendel's most astonishing finding: in the 2nd generation, the "lost" trait reappeared — always at a ratio of about <b>3:1</b>.</em>
+  </p>
+
+  <!-- 步骤引导 -->
+  <div class="step-guide">
+    <div class="step done" id="step1">
+      <span class="num">1</span>
+      <h3 style="font-size:14px;margin:6px 0 4px">亲本 P · Parents</h3>
+      <p>紫花纯种 × 白花纯种<br>Purple true-breeding × White true-breeding</p>
+    </div>
+    <div class="step done" id="step2">
+      <span class="num">2</span>
+      <h3 style="font-size:14px;margin:6px 0 4px">子一代 F₁ · All Purple</h3>
+      <p>全部是紫花杂种<br>All offspring are <b>purple hybrids</b></p>
+    </div>
+    <div class="step active" id="step3">
+      <span class="num">3</span>
+      <h3 style="font-size:14px;margin:6px 0 4px">子二代 F₂ · 3:1?</h3>
+      <p>F₁ × F₁ 自交 → 会出现什么？<br>What happens when F₁ × F₁ ?</p>
+    </div>
+    <div class="step" id="step4">
+      <span class="num">4</span>
+      <h3 style="font-size:14px;margin:6px 0 4px">统计验证 Counting</h3>
+      <p>种下一大片 F₂ 豌豆，数一数！<br>Plant many F₂ peas — count them!</p>
+    </div>
+  </div>
+
+  <!-- 杂交动画舞台 -->
+  <div class="cross-stage">
+    <h3 style="font-size:14px;margin:0 0 12px">🎬 F₁ × F₁ 杂交演示 · The F₁ Cross</h3>
+    <div class="cross-row">
+      <div class="plant-ico hybrid">🌱</div>
+      <div class="cross-label"><b>亲本 1 · Parent 1</b>F₁ 紫花杂种 · F₁ purple hybrid</div>
+      <div style="font-size:24px;color:var(--purple)">✕</div>
+      <div class="plant-ico hybrid">🌱</div>
+      <div class="cross-label"><b>亲本 2 · Parent 2</b>F₁ 紫花杂种 · F₁ purple hybrid</div>
+    </div>
+    <div style="text-align:center;margin:10px 0;font-size:13px;color:var(--muted)">
+      ⬇ 异花授粉 / 自花授粉 · Cross-pollination / Self-pollination ⬇
+    </div>
+    <div class="cross-row" id="f2Result" style="display:none">
+      <div class="plant-ico purple">🟣</div>
+      <div class="cross-label"><b>F₂ 后代 · F₂ offspring</b>出现<b style="color:var(--purple)">紫花</b>和<b style="color:var(--ink-2)">白花</b>！<br>The white flowers come back!</div>
+      <div class="plant-ico white">⚪</div>
+    </div>
+    <button class="arrow-btn" id="crossBtn" onclick="doF1Cross()">▶ 让 F₁ 杂交 · Run the Cross</button>
+  </div>
+
+  <!-- 豌豆花园 -->
+  <div class="garden-section">
+    <h3 style="font-size:15px;margin:0 0 6px">🌱 你的 F₂ 豌豆园 · Your F₂ Pea Garden</h3>
+    <div class="hint">
+      点击每个格子种下一颗 F₂ 种子，看看它是<b style="color:var(--purple)">紫花</b>还是<b>白花</b>。统计得越多，越接近 3:1！
+      <br><em>Click each cell to plant an F₂ seed. Watch the ratio approach 3:1 as you collect more data!</em>
+    </div>
+    <div class="garden-grid" id="garden"></div>
+
+    <button class="arrow-btn" onclick="fillGardenRandom()" style="background:var(--green);margin-right:8px">🎲 随机填满 32 颗</button>
+    <button class="arrow-btn" onclick="resetGarden()" style="background:var(--muted)">🔄 清空重置</button>
+
+    <div class="stats-box">
+      <div class="stat-card">
+        <div class="lbl">🟣 紫花 Purple</div>
+        <div class="val purple-c" id="countPurple">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="lbl">⚪ 白花 White</div>
+        <div class="val white-c" id="countWhite">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="lbl">📊 实际比例 Purple:White</div>
+        <div class="val ratio-c" id="ratioValue">— : —</div>
+      </div>
+    </div>
+
+    <div class="ratio-bar">
+      <div class="title">
+        <span>你的实验结果 vs 理论 3:1</span>
+        <span id="ratioPercent">— % vs 75%</span>
+      </div>
+      <div class="bar-outer">
+        <div class="bar-inner purple-b" id="barPurple" style="width:50%"></div>
+        <div class="bar-inner white-b" id="barWhite" style="width:50%"></div>
+      </div>
+      <div class="bar-legend">
+        <span class="lg-p">紫花 Purple（理论 75%）</span>
+        <span class="lg-w">白花 White（理论 25%）</span>
+      </div>
+    </div>
+
+    <div class="history-log" id="historyLog">
+      <div style="color:var(--muted);font-style:italic">📝 种植日志 · Planting log will appear here…</div>
+    </div>
+  </div>
+
+  <!-- 孟德尔真实数据 -->
+  <div class="mendel-data">
+    <h3 style="font-size:14px;margin:0 0 8px;color:var(--amber)">📖 孟德尔真实数据 · Mendel's Real Data（1865）</h3>
+    <p style="margin:4px 0 10px;font-size:13px;color:var(--ink-2)">
+      他统计了<b>上千株</b>豌豆，所有 7 对性状都接近 3:1。样本越大，越接近理论值！
+      <br><em>He counted <b>thousands</b> of peas. All 7 traits were close to 3:1. Larger samples → closer to theory!</em>
+    </p>
+    <table class="mendel-table">
+      <caption style="text-align:left;font-size:12px;color:var(--muted);margin-bottom:6px">表1：孟德尔七对性状 F₂ 杂交实验数据（1865）· Mendel seven-trait F₂ cross results</caption>
+      <thead>
+        <tr><th>性状 Trait</th><th>显性 Dominant</th><th>隐性 Recessive</th><th>总数 Total</th><th>比例 Ratio</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>花色 Flower color</td><td>🟣 705</td><td>⚪ 224</td><td>929</td><td class="ratio">3.15 : 1</td></tr>
+        <tr><td>花位置 Flower position</td><td>腋生 651</td><td>顶生 207</td><td>858</td><td class="ratio">3.14 : 1</td></tr>
+        <tr><td>种子颜色 Seed color</td><td>🟡 6022</td><td>🟢 2001</td><td>8023</td><td class="ratio">3.01 : 1</td></tr>
+        <tr><td>种子形状 Seed shape</td><td>圆 5474</td><td>皱 1850</td><td>7324</td><td class="ratio">2.96 : 1</td></tr>
+        <tr><td>豆荚形状 Pod shape</td><td>饱满 882</td><td>缢缩 299</td><td>1181</td><td class="ratio">2.95 : 1</td></tr>
+        <tr><td>豆荚颜色 Pod color</td><td>🟢 428</td><td>🟡 152</td><td>580</td><td class="ratio">2.82 : 1</td></tr>
+        <tr><td>茎高 Stem length</td><td>高 787</td><td>矮 277</td><td>1064</td><td class="ratio">2.84 : 1</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ===== Section 4: Reader's Theater ===== -->
+<section class="section" id="theater">
+  <h2><span class="tag">04</span>Reader's Theater · 采访孟德尔</h2>
+  <p class="lead">
+    🎭 现在你是 1865 年的一位科学记者，正在采访刚刚发表豌豆实验论文的孟德尔修士！
+    <br><em>You are a science reporter in 1865, interviewing Friar Mendel right after he published his pea paper!</em>
+  </p>
+
+  <div class="theater-stage">
+    <div class="theater-head">
+      <span class="curtain">🎭</span>
+      <h3 style="margin:0;font-size:17px">An Interview with Gregor Mendel</h3>
+      <span class="sub">Brünn, 1865 · 布尔诺修道院</span>
+    </div>
+
+    <div class="roles">
+      <div class="role-chip reporter"><span class="av">🎤</span>You · 记者 Reporter</div>
+      <div class="role-chip mendel"><span class="av">👨‍🔬</span>Gregor Mendel · 孟德尔修士</div>
+    </div>
+
+    <div class="interview-log" id="interviewLog">
+      <div class="msg mendel">
+        <div class="avatar">👨‍🔬</div>
+        <div>
+          <div class="name">MENDEL · 孟德尔</div>
+          <div class="bubble">
+            <span class="zh">Welcome to my garden, reporter. I've just presented my pea experiments to the Natural History Society. Ask me anything about heredity!</span>
+            <span class="en">欢迎来到我的花园，记者。我刚刚向自然科学会报告了我的豌豆实验。关于遗传，随便问！</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="q-panel" id="qPanel"></div>
+
+    <div class="voice-bar">
+      <button class="mic" id="micBtn" onclick="toggleMic()" title="语音提问">🎙️</button>
+      <div class="status" id="voiceStatus">
+        点击 <b>🎙️</b> 开始语音提问，或直接点击下方问题卡 · Click <b>🎙️</b> or tap a question card below
+      </div>
+      <button class="play-all" onclick="playFullInterview()">▶ 播放完整采访</button>
+    </div>
+
+    <div class="voice-note">
+      💡 <b>教师使用提示 · Teacher's Note：</b>
+      语音识别需要 <code>https</code> 或 <code>localhost</code> 环境，以及浏览器麦克风权限。
+      建议使用 Chrome / Edge。如语音不可用，可点击问题卡片进行文字互动。
+      <br><em>Voice recognition requires HTTPS/localhost and mic permission. Use Chrome/Edge. Click question cards for text-only mode.</em>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  🌱 Mendel & His Peas · 孟德尔与他的豌豆 · G9 Honor Biology · Lesson 3<br>
+  Built for interactive classroom learning · 课堂互动学习专用
+</footer>
+
+<script>
+/* ============================================
+ * 通用：语言切换（简化版本，只影响 lead 副标题显隐）
+ * ============================================ */
+let currentLang = 'both';
+function toggleLang(){
+  currentLang = currentLang === 'both' ? 'en' : (currentLang === 'en' ? 'zh' : 'both');
+  document.getElementById('langBtn').textContent = currentLang === 'both' ? 'EN / 中' : (currentLang === 'en' ? 'EN only' : '中文');
+  document.querySelectorAll('.bilingual .en, .compare-card li em, .pollinate-demo em, .flower-info p').forEach(el=>{
+    if(currentLang === 'both'){el.style.display = ''}
+    else if(currentLang === 'en'){el.style.display = ''}
+    else{el.style.display = 'none'}
+  });
+}
+
+/* ============================================
+ * Section 2: Perfect Flower
+ * ============================================ */
+const flowerParts = {
+  pistil:{
+    title:'♀ 雌蕊 · Pistil (Female)',
+    sex:'female-tag',
+    zh:'雌蕊是花的"女性生殖器官"，由三部分组成：',
+    lines:[
+      ['柱头 Stigma','黏黏的表面，负责"接住"花粉。','Sticky top — catches pollen.'],
+      ['花柱 Style','连接柱头和子房的"通道"。','Tube connecting stigma to ovary.'],
+      ['子房 Ovary','底部膨大，内含胚珠（ovules）。受精后发育成果实（豌豆荚）！','Contains ovules. After fertilization → becomes the pea pod!']
+    ]
+  },
+  stamen:{
+    title:'♂ 雄蕊 · Stamen (Male)',
+    sex:'male-tag',
+    zh:'雄蕊是花的"男性生殖器官"，也由三部分组成：',
+    lines:[
+      ['花药 Anther','顶部"小口袋"，产生并释放花粉（pollen）。','Top "sac" — produces and releases pollen.'],
+      ['花丝 Filament','支撑花药的细丝。','Thin stalk supporting the anther.'],
+      ['花粉 Pollen','雄蕊产生的"精子"载体，会被传到雌蕊柱头上。','The male "sperm carrier" — transferred to the stigma.']
+    ]
+  },
+  petal:{
+    title:'🌸 花瓣 · Petals',
+    sex:'',
+    zh:'豌豆花的花瓣分为三种形态：',
+    lines:[
+      ['旗瓣 Standard','最大最显眼的一片，负责吸引传粉者。','Largest petal — attracts pollinators.'],
+      ['翼瓣 Wings','两侧较小的花瓣，像翅膀。','Smaller side petals, like wings.'],
+      ['龙骨瓣 Keel','下方两片合生，包裹住雌蕊和雄蕊。','Two fused bottom petals — enclose pistil & stamens.']
+    ]
+  },
+  sepal:{
+    title:'🍃 萼片 · Sepals',
+    sex:'',
+    zh:'萼片是花的"保护外套"：',
+    lines:[
+      ['功能','在花未开放时保护内部娇嫩的花瓣和生殖器官。','Protect the bud before it opens.'],
+      ['位置','位于花的最外层，通常是绿色的小片。','Outermost layer — usually green.']
+    ]
+  }
+};
+
+function showPart(key){
+  const p = flowerParts[key];
+  const info = document.getElementById('flowerInfo');
+  document.querySelectorAll('.flower-part').forEach(el=>el.classList.remove('active'));
+  document.querySelector(`.flower-part[data-part="${key}"]`)?.classList.add('active');
+  let html = `<h3 style="margin:0 0 10px;color:var(--green);font-size:18px;display:flex;align-items:center;gap:8px">${p.title}`;
+  if(p.sex) html += ` <span class="sex-tag ${p.sex}" style="margin-left:auto">${p.sex==='female-tag'?'♀ Female':'♂ Male'}</span>`;
+  html += `</h3><p class="zh-line">${p.zh}</p>`;
+  p.lines.forEach(l=>{
+    html += `<p><b style="color:var(--green)">${l[0]}</b>：${l[1]}<br><em style="color:var(--muted);font-size:13px">${l[2]}</em></p>`;
+  });
+  info.innerHTML = html;
+}
+
+function switchPollTab(tab){
+  document.querySelectorAll('.pollinate-tabs button').forEach(b=>b.classList.toggle('active', b.dataset.tab===tab));
+  const demo = document.getElementById('pollDemo');
+  if(tab==='self'){
+    demo.innerHTML = `<strong>🌱 自花授粉 Self-Pollination</strong><br>
+      同一朵花内，<b>雄蕊的花粉</b>（pollen from anther）落到<b>同一朵花或同一植株另一朵花</b>的柱头上。<br>
+      <em>Pollen from the stamen lands on the pistil of <b>the same flower</b> or another flower on the same plant.</em><br><br>
+      💡 <b>结果：</b>后代永远是"纯种"（true-breeding）——和亲本长得一模一样！<br>
+      <em>Result: offspring are always <b>true-breeding</b> — identical to the parent.</em>`;
+  } else {
+    demo.innerHTML = `<strong>🌸→🌸 异花授粉 Cross-Pollination</strong><br>
+      <b>一朵花的花粉</b>被传到<b>另一株植物的花</b>的柱头上。<br>
+      <em>Pollen from one flower lands on a flower on <b>another plant</b>.</em><br><br>
+      💡 <b>孟德尔的操作：</b>他<b>人工去除</b>一朵花的雄蕊（去雄），再用刷子把另一朵花的花粉抹上去，实现可控杂交！<br>
+      <em>Mendel's trick: <b>removed stamens</b> from one flower, then brushed pollen from another flower onto its pistil — a controlled cross!</em>`;
+  }
+}
+
+/* ============================================
+ * Section 3: 3:1 Explorer
+ * ============================================ */
+let purpleCount = 0, whiteCount = 0, planted = 0;
+const GARDEN_SIZE = 32;
+const gardenEl = document.getElementById('garden');
+const historyLog = document.getElementById('historyLog');
+
+function buildGarden(){
+  gardenEl.innerHTML = '';
+  for(let i=0;i<GARDEN_SIZE;i++){
+    const cell = document.createElement('div');
+    cell.className = 'pea-cell';
+    cell.dataset.index = i;
+    cell.title = `豌豆 #${i+1}`;
+    cell.onclick = ()=>plantPea(cell, i);
+    gardenEl.appendChild(cell);
+  }
+}
+
+function plantPea(cell, idx){
+  if(cell.classList.contains('planted')) return;
+  // 75% 紫花, 25% 白花
+  const isPurple = Math.random() < 0.75;
+  cell.classList.add('planted', isPurple?'purple':'white');
+  cell.textContent = isPurple ? '🟣' : '⚪';
+  if(isPurple) purpleCount++; else whiteCount++;
+  planted++;
+  updateStats();
+  logHistory(idx+1, isPurple);
+  checkSteps();
+}
+
+function fillGardenRandom(){
+  const cells = gardenEl.querySelectorAll('.pea-cell:not(.planted)');
+  let i = 0;
+  const fillNext = ()=>{
+    if(i >= cells.length) return;
+    plantPea(cells[i], parseInt(cells[i].dataset.index));
+    i++;
+    setTimeout(fillNext, 80);
+  };
+  fillNext();
+}
+
+function resetGarden(){
+  purpleCount = 0; whiteCount = 0; planted = 0;
+  historyLog.innerHTML = '<div style="color:var(--muted);font-style:italic">📝 种植日志 · Planting log will appear here…</div>';
+  buildGarden();
+  updateStats();
+  document.getElementById('step3').classList.add('active');
+  document.getElementById('step4').classList.remove('done');
+}
+
+function updateStats(){
+  document.getElementById('countPurple').textContent = purpleCount;
+  document.getElementById('countWhite').textContent = whiteCount;
+  if(whiteCount === 0 && purpleCount === 0){
+    document.getElementById('ratioValue').textContent = '— : —';
+    document.getElementById('barPurple').style.width = '50%';
+    document.getElementById('barWhite').style.width = '50%';
+    document.getElementById('ratioPercent').textContent = '— % vs 75%';
+    return;
+  }
+  const total = purpleCount + whiteCount;
+  const pRatio = whiteCount === 0 ? '∞' : (purpleCount/whiteCount).toFixed(2);
+  document.getElementById('ratioValue').textContent = `${pRatio} : 1`;
+  const pPct = (purpleCount/total*100).toFixed(1);
+  document.getElementById('barPurple').style.width = pPct + '%';
+  document.getElementById('barWhite').style.width = (100-pPct) + '%';
+  document.getElementById('ratioPercent').textContent = `${pPct}% vs 理论 75%`;
+}
+
+function logHistory(num, isPurple){
+  if(planted === 1) historyLog.innerHTML = '';
+  const row = document.createElement('div');
+  row.className = 'row';
+  const total = purpleCount + whiteCount;
+  const r = whiteCount===0 ? '—' : (purpleCount/whiteCount).toFixed(2);
+  row.innerHTML = `<span>#${num} · ${isPurple?'🟣 紫花':'⚪ 白花'}</span><span>累计 <b>${purpleCount}</b> : <b>${whiteCount}</b> = <b>${r}:1</b></span>`;
+  historyLog.insertBefore(row, historyLog.firstChild);
+}
+
+function checkSteps(){
+  if(planted >= 8){
+    document.getElementById('step4').classList.add('active');
+    document.getElementById('step3').classList.remove('active');
+    document.getElementById('step3').classList.add('done');
+  }
+  if(planted >= GARDEN_SIZE){
+    document.getElementById('step4').classList.add('done');
+  }
+}
+
+function doF1Cross(){
+  const btn = document.getElementById('crossBtn');
+  btn.disabled = true;
+  btn.textContent = '⏳ 杂交进行中…';
+  setTimeout(()=>{
+    document.getElementById('f2Result').style.display = 'flex';
+    btn.textContent = '✓ F₂ 出现紫花和白花！';
+    setTimeout(()=>{
+      document.getElementById('step2').classList.remove('active');
+      document.getElementById('step2').classList.add('done');
+      document.getElementById('step3').classList.add('done');
+    }, 400);
+  }, 900);
+}
+
+buildGarden();
+
+/* ============================================
+ * Section 4: Reader's Theater (Voice Interactive)
+ * ============================================ */
+const interviewQA = [
+  {
+    q:{zh:'孟德尔修士，您为什么选择豌豆做实验？',en:'Friar Mendel, why did you choose peas for your experiments?'},
+    a:{
+      zh:'因为它们繁殖快、后代多、性状分明！我试过豌豆的 7 对容易辨别的特征——比如紫花还是白花、圆种子还是皱种子。而且豌豆能自花授粉，让我能得到纯种品系，再手动控制它们杂交。',
+      en:'Because they reproduce quickly, have many offspring, and show clear traits! I tested 7 easy-to-distinguish characteristics — like purple vs white flowers, round vs wrinkled seeds. And peas self-pollinate, letting me obtain true-breeding lines and then manually cross them.'
+    }
+  },
+  {
+    q:{zh:'什么是 heredity（遗传）和 trait（性状）？',en:'What are heredity and traits?'},
+    a:{
+      zh:'Heredity 是父母把特征传给后代的过程；trait 是生物体的可观察特征，比如你的耳垂是贴着的还是游离的，豌豆的花是紫色还是白色。',
+      en:'Heredity is the passing of characteristics from parents to offspring; a trait is an observable feature — like whether your earlobes are attached or free, or whether a pea flower is purple or white.'
+    }
+  },
+  {
+    q:{zh:'什么叫 "true-breeding"（真实遗传）？',en:'What does "true-breeding" mean?'},
+    a:{
+      zh:'当一个植物<b>自花授粉</b>后，后代永远和亲本长得一模一样——比如皱豌豆自交后永远是皱豌豆，紫花自交后永远是紫花。我先把 7 对性状都培养成这样的"纯种"品系，才开始做杂交实验。',
+      en:'When a plant <b>self-pollinates</b>, the offspring always look exactly like the parent — wrinkled peas always produce wrinkled peas, purple flowers always produce purple flowers. I first bred all 7 traits into such "true-breeding" lines before starting my crosses.'
+    }
+  },
+  {
+    q:{zh:'为什么 F₁ 代全是紫花？白花去哪了？',en:'Why were all F₁ offspring purple? Where did the white go?'},
+    a:{
+      zh:'好问题！白花并没有消失——它只是被紫花"掩盖"了。我把这种掩盖的性状叫<b>显性 dominant</b>（紫色），被掩盖的叫<b>隐性 recessive</b>（白色）。所以 F₁ 看起来全是紫色。',
+      en:'Great question! The white didn\'t disappear — it was simply <b>hidden</b> by the purple. I call the hidden one <b>dominant</b> (purple) and the hidden one <b>recessive</b> (white). That\'s why F₁ all look purple.'
+    }
+  },
+  {
+    q:{zh:'F₂ 代为什么又出现白花，比例还接近 3:1？',en:'Why did white flowers reappear in F₂, always around 3:1?'},
+    a:{
+      zh:'因为每个 F₁ 杂种植株都<b>同时带有紫色和白色两个"因子"</b>（我们现在叫等位基因 allele）。当 F₁ 自交时，这些因子会<b>分离</b>（segregate），以 3:1 的比例重新组合——这就是我后来提出的<b>分离定律 Law of Segregation</b>。',
+      en:'Because every F₁ hybrid carries <b>both a purple and a white "factor"</b> (what we now call alleles). When F₁s self-pollinate, these factors <b>segregate</b> and recombine in a 3:1 ratio — what later became my <b>Law of Segregation</b>.'
+    }
+  },
+  {
+    q:{zh:'所有 7 对性状都是 3:1 吗？这太神奇了！',en:'All 7 traits came out ~3:1? That\'s amazing!'},
+    a:{
+      zh:'是的！无论花色、种子形状、豆荚颜色还是茎高，F₂ 的显隐性比例都在 3:1 附近。这意味着<b>所有性状都遵循同一套遗传规律</b>——这是我最骄傲的发现。',
+      en:'Yes! Whether flower color, seed shape, pod color, or stem height, the F₂ dominant-to-recessive ratio was always around 3:1. This means <b>all traits follow the same hereditary rules</b> — my proudest discovery.'
+    }
+  },
+  {
+    q:{zh:'为什么您的论文发表后 35 年才被重视？',en:'Why did it take 35 years for your paper to be recognized?'},
+    a:{
+      zh:'因为我用<b>数学</b>来解释<b>生物</b>，这在 1865 年太超前了。直到 1900 年，三位科学家（de Vries、Correns、von Tschermak）独立重复出我的结果，才发现我早在 35 年前就写过了。',
+      en:'Because I used <b>mathematics</b> to explain <b>biology</b> — too advanced for 1865. It wasn\'t until 1900, when three scientists (de Vries, Correns, von Tschermak) independently reproduced my results, that they discovered I had written it 35 years earlier.'
+    }
+  },
+  {
+    q:{zh:'您对现在学习遗传学的学生有什么建议？',en:'Any advice for students learning genetics today?'},
+    a:{
+      zh:'观察要仔细，计数要诚实，<b>让数据说话</b>。不要害怕从"简单"的生物开始——豌豆比鸽子更能告诉你真相。祝你们在遗传学的世界里有奇妙的发现！',
+      en:'Observe carefully, count honestly, and <b>let the data speak</b>. Don\'t be afraid to start with "simple" organisms — peas will tell you more truth than pigeons. I wish you wonderful discoveries in the world of genetics!'
+    }
+  }
+];
+
+const qPanel = document.getElementById('interviewLog');
+const qPanelEl = document.getElementById('qPanel');
+
+function buildQPanel(){
+  qPanelEl.innerHTML = '';
+  interviewQA.forEach((qa, i)=>{
+    const btn = document.createElement('button');
+    btn.className = 'q-btn';
+    btn.dataset.index = i;
+    btn.innerHTML = `<span class="num">${i+1}</span><span class="t"><span class="zh">${qa.q.zh}</span><span class="en">${qa.q.en}</span></span>`;
+    btn.onclick = ()=>askQuestion(i);
+    qPanelEl.appendChild(btn);
+  });
+}
+buildQPanel();
+
+let askedSet = new Set();
+
+function askQuestion(i){
+  if(askedSet.has(i)) return;
+  askedSet.add(i);
+  const qa = interviewQA[i];
+  // 记者提问
+  const reporterMsg = document.createElement('div');
+  reporterMsg.className = 'msg reporter';
+  reporterMsg.innerHTML = `<div class="avatar">🎤</div><div><div class="name">REPORTER · 记者</div><div class="bubble"><span class="zh">${qa.q.zh}</span><span class="en">${qa.q.en}</span></div></div>`;
+  qPanel.appendChild(reporterMsg);
+  // 标记问题已问
+  qPanelEl.children[i].classList.add('asked');
+  // 孟德尔回答（延迟出现，模拟思考）
+  setTimeout(()=>{
+    const mendelMsg = document.createElement('div');
+    mendelMsg.className = 'msg mendel';
+    mendelMsg.innerHTML = `<div class="avatar">👨‍🔬</div><div><div class="name">MENDEL · 孟德尔</div><div class="bubble"><span class="zh">${qa.a.zh}</span><span class="en">${qa.a.en}</span></div></div>`;
+    qPanel.appendChild(mendelMsg);
+    qPanel.scrollTop = qPanel.scrollHeight;
+    // 语音朗读孟德尔回答（中文）
+    speak(qa.a.zh, 'zh-CN');
+  }, 600);
+  qPanel.scrollTop = qPanel.scrollHeight;
+}
+
+/* ============================================
+ * Voice: TTS (Text-to-Speech)
+ * ============================================ */
+function speak(text, lang='zh-CN'){
+  if(!('speechSynthesis' in window)) return;
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = lang;
+  u.rate = 0.95;
+  u.pitch = 1;
+  // 尝试挑选中文声音
+  const voices = speechSynthesis.getVoices();
+  const zhVoice = voices.find(v=>v.lang.startsWith('zh')) || voices[0];
+  if(zhVoice) u.voice = zhVoice;
+  speechSynthesis.speak(u);
+}
+if('speechSynthesis' in window){
+  speechSynthesis.onvoiceschanged = ()=>{};
+}
+
+/* ============================================
+ * Voice: Speech Recognition (语音提问)
+ * ============================================ */
+let recognition = null;
+let isRecording = false;
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+if(SR){
+  recognition = new SR();
+  recognition.lang = 'zh-CN';
+  recognition.interimResults = false;
+  recognition.continuous = false;
+  recognition.onresult = (e)=>{
+    const text = e.results[0][0].transcript.toLowerCase();
+    handleVoiceQuery(text);
+  };
+  recognition.onend = ()=>{
+    isRecording = false;
+    document.getElementById('micBtn').classList.remove('recording');
+    document.getElementById('voiceStatus').innerHTML = '点击 <b>🎙️</b> 继续提问';
+  };
+  recognition.onerror = (e)=>{
+    document.getElementById('voiceStatus').innerHTML = `⚠️ 识别错误：${e.error}。请改用点击下方问题卡。`;
+  };
+}
+
+function toggleMic(){
+  if(!recognition){
+    document.getElementById('voiceStatus').innerHTML = '⚠️ 浏览器不支持语音识别，请直接用下方问题卡';
+    return;
+  }
+  if(isRecording){
+    recognition.stop();
+    return;
+  }
+  isRecording = true;
+  document.getElementById('micBtn').classList.add('recording');
+  document.getElementById('voiceStatus').innerHTML = '🎙️ <b>正在聆听…</b> 请说出你的问题（中文）';
+  recognition.start();
+}
+
+function handleVoiceQuery(text){
+  document.getElementById('voiceStatus').innerHTML = `🎤 识别结果："<b>${text}</b>" · 正在匹配问题…`;
+  // 简易关键词匹配
+  const keywords = {
+    0:['豌豆','为什么','选','pea','why'],
+    1:['遗传','性状','heredity','trait'],
+    2:['纯种','真实','true-breeding'],
+    3:['f1','第一代','白花','消失','紫色'],
+    4:['f2','3:1','比例','白花又','reappear'],
+    5:['7','所有','7对','all seven'],
+    6:['35年','论文','重视','发表'],
+    7:['建议','学生','advice']
+  };
+  let bestIdx = -1, bestScore = 0;
+  for(const [idx, kws] of Object.entries(keywords)){
+    const score = kws.filter(k=>text.includes(k)).length;
+    if(score > bestScore){bestScore = score; bestIdx = parseInt(idx);}
+  }
+  if(bestIdx >= 0 && !askedSet.has(bestIdx)){
+    setTimeout(()=>askQuestion(bestIdx), 500);
+  } else {
+    document.getElementById('voiceStatus').innerHTML = '🤔 没听懂或已问过。请试试直接点击下方问题卡 👇';
+  }
+}
+
+/* 播放完整采访（自动按顺序播放所有问答） */
+function playFullInterview(){
+  let i = 0;
+  const playNext = ()=>{
+    if(i >= interviewQA.length){
+      document.getElementById('voiceStatus').innerHTML = '✓ 完整采访播放完毕！';
+      return;
+    }
+    if(!askedSet.has(i)) askQuestion(i);
+    i++;
+    setTimeout(playNext, 5000);
+  };
+  playNext();
+}
+
+/* ============================================
+ * Smooth scroll for nav
+ * ============================================ */
+document.querySelectorAll('.nav a').forEach(a=>{
+  a.addEventListener('click', e=>{
+    const href = a.getAttribute('href');
+    if(href && href.startsWith('#')){
+      e.preventDefault();
+      const target = document.querySelector(href);
+      if(target) target.scrollIntoView({behavior:'smooth',block:'start'});
+    }
+  });
+});
+</script>
+</body>
+</html>
