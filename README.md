@@ -13,8 +13,10 @@ A zero-dependency, single-file interactive lesson for classroom projection and s
 
 1. **为什么是豌豆？** Why Peas? — Mendel（豌豆）与 Darwin（家鸽）对比：为什么孟德尔找到了遗传规律
 2. **Perfect Flower 完全花结构** — 可点击 SVG 花结构图：雌蕊（柱头/花柱/子房）、雄蕊（花药/花丝/花粉）、花瓣、萼片；自花 vs 异花授粉演示
-3. **3:1 比例探索** — F₁×F₁ 杂交动画 + 32 格"豌豆园"互动统计，学生亲手播种、实时计数，体验样本越大越接近 3:1；附孟德尔 1865 年七对性状真实数据
-4. **Reader's Theater 采访孟德尔** — 语音提问（Web Speech）+ 8 组中英双语问答，孟德尔语音朗读回答
+3. **P → F₁：第一次杂交** — 四步交互：①自交验证 true-breeding 纯种 → ②预测 F₁ 花色（混合遗传干扰项）→ ③去雄/授粉/结荚动画（人工异花授粉）→ ④种下 16 颗 F₁ 种子发现全部紫花，引出显性/隐性（dominant / recessive）与 Pp 因子解释
+4. **3:1 比例探索** — F₁×F₁ 杂交动画 + 32 格"豌豆园"互动统计，学生亲手播种、实时计数，体验样本越大越接近 3:1；附孟德尔 1865 年七对性状真实数据
+5. **Reader's Theater 采访孟德尔** — 全英文剧本《An Interview with Gregor Mendel》，字幕跟随朗读（Web Speech TTS，可 Play / Pause / Restart，点击任意台词跳转）；也适合课堂分角色朗读。台词上方附生物学关键词汇表
+- **仿真花结构**：蝶形花冠（旗瓣/翼瓣/龙骨瓣）可点击；可"剖开龙骨瓣"查看内部 10 枚雄蕊（9 合 1 离）与雌蕊结构
 
 ---
 
@@ -31,7 +33,7 @@ A zero-dependency, single-file interactive lesson for classroom projection and s
 8. 等待 1–2 分钟，页面上方会显示网址：
    `https://<你的用户名>.github.io/mendel-peas/`
 
-把这个网址发给学生即可。HTTPS 环境下 🎙️ 语音提问功能可用（推荐 Chrome / Edge）。
+把这个网址发给学生即可。剧本朗读（TTS）推荐使用 Chrome / Edge 浏览器。
 
 ---
 
