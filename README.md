@@ -54,4 +54,4 @@ A zero-dependency, single-file interactive lesson for classroom projection and s
 
 ---
 
-*Built for G9 Honor Biology · 上海金山杭州湾双语学校 · 李晶老师生物教学*
+
